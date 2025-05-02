@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34902.65
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "populate-db", "populate-db\populate-db.csproj", "{1C13C0E5-A454-44E4-A2A2-011ECC1FFFE3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "populate-db-2", "populate-db-2\populate-db-2.csproj", "{60E8CC76-4B63-41EB-8DCE-5E787E5D469E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1C13C0E5-A454-44E4-A2A2-011ECC1FFFE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C13C0E5-A454-44E4-A2A2-011ECC1FFFE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C13C0E5-A454-44E4-A2A2-011ECC1FFFE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C13C0E5-A454-44E4-A2A2-011ECC1FFFE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60E8CC76-4B63-41EB-8DCE-5E787E5D469E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60E8CC76-4B63-41EB-8DCE-5E787E5D469E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60E8CC76-4B63-41EB-8DCE-5E787E5D469E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60E8CC76-4B63-41EB-8DCE-5E787E5D469E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {141ADBD1-9559-4048-ABFF-6DA59F73E662}
+	EndGlobalSection
+EndGlobal
