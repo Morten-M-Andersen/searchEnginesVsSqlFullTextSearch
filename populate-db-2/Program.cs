@@ -13,6 +13,7 @@ using System.Data;
 class TestDataGenerator
 {
     private const string ConnectionString = "Server=localhost;Database=SparePartsDB;Trusted_Connection=True;TrustServerCertificate=True;";
+    private const int Seed = 133780113;
 
     static async Task Main(string[] args)
     {
@@ -46,8 +47,9 @@ class TestDataGenerator
             int sparePartCountPerUnitActive = 130000;
             int sparePartCountPerUnitHistoric = 570000;
 
-            // Initialize Faker with English localization
+            // Initialize Faker with English localization and Randomizer Seed
             var faker = new Faker("en");
+            faker.Random = new Randomizer(Seed);
 
             // 1. Generate Units
             var units = GenerateUnits(unitCount, faker);
@@ -4090,6 +4092,8 @@ class TestDataGenerator
             "CREATE INDEX IX_ComponentPart_SparePartGuid ON ComponentPart(SparePartGuid)",
             "CREATE INDEX IX_ComponentPart_UnitGuid ON ComponentPart(UnitGuid)",
         };
+
+            // TODO: Add "History_Tunining" indexes
 
             foreach (var cmdText in indexCommands)
             {
