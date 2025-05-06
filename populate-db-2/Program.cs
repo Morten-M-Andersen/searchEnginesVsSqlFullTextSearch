@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using Bogus.DataSets;
 
 class TestDataGenerator
 {
@@ -3822,6 +3823,7 @@ class TestDataGenerator
             var disableConstraintsCommand = new SqlCommand(
                 "EXEC sp_MSforeachtable \"ALTER TABLE ? NOCHECK CONSTRAINT all\"",
                 connection);
+
             await disableConstraintsCommand.ExecuteNonQueryAsync();
 
             // Opret Unit tabel
@@ -3981,8 +3983,170 @@ class TestDataGenerator
                 CONSTRAINT FK_ComponentPart_Master FOREIGN KEY (master_id) REFERENCES ComponentPart(Id)
             )
         ");
+            Console.WriteLine("Database tables created successfully.");
+        }
 
-            Console.WriteLine("Database schema created successfully.");
+        using (var connection = new SqlConnection(ConnectionString))
+        {
+            await connection.OpenAsync();
+            Console.WriteLine("Preparing to update indexes...");
+
+            // 1. Identificer og gem alle FK-constraints for senere genskabelse
+            var getAllForeignKeysCmd = new SqlCommand(@"
+            SELECT 
+                OBJECT_NAME(f.parent_object_id) AS TableName,
+                f.name AS ForeignKeyName,
+                OBJECT_NAME(f.referenced_object_id) AS ReferencedTableName,
+                COL_NAME(fc.parent_object_id, fc.parent_column_id) AS ColumnName,
+                COL_NAME(fc.referenced_object_id, fc.referenced_column_id) AS ReferencedColumnName
+            FROM 
+                sys.foreign_keys f
+                INNER JOIN sys.foreign_key_columns fc ON f.OBJECT_ID = fc.constraint_object_id
+            WHERE 
+                OBJECT_NAME(f.parent_object_id) IN 
+                ('Manufacturer', 'Category', 'Supplier', 'Location', 'Component', 'SparePart', 'ComponentPart')
+            ORDER BY 
+                OBJECT_NAME(f.parent_object_id)", connection);
+
+            var fkConstraints = new List<(string TableName, string FkName, string RefTableName, string ColumnName, string RefColumnName)>();
+            using (var reader = await getAllForeignKeysCmd.ExecuteReaderAsync())
+            {
+                while (await reader.ReadAsync())
+                {
+                    fkConstraints.Add((
+                        reader["TableName"].ToString(),
+                        reader["ForeignKeyName"].ToString(),
+                        reader["ReferencedTableName"].ToString(),
+                        reader["ColumnName"].ToString(),
+                        reader["ReferencedColumnName"].ToString()
+                    ));
+                }
+            }
+
+            Console.WriteLine($"Found {fkConstraints.Count} foreign key constraints to manage");
+
+            // 2. Drop alle foreign key constraints
+            foreach (var (tableName, fkName, _, _, _) in fkConstraints)
+            {
+                try
+                {
+                    Console.WriteLine($"Dropping foreign key {fkName} on {tableName}");
+                    var dropFkCmd = new SqlCommand($"ALTER TABLE {tableName} DROP CONSTRAINT {fkName}", connection);
+                    await dropFkCmd.ExecuteNonQueryAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error dropping FK {fkName}: {ex.Message}");
+                }
+            }
+
+            // 3. Identificer og konverter alle primary key constraints til nonclustered
+            var tables = new[] { "Manufacturer", "Category", "Supplier", "Location", "Component", "SparePart", "ComponentPart" };
+
+            var pkConstraints = new List<(string TableName, string PkName, string ColumnName)>();
+
+            foreach (var table in tables)
+            {
+                // Find primary key
+                var findPkCmd = new SqlCommand(
+                    $@"SELECT i.name AS IndexName, COL_NAME(ic.object_id, ic.column_id) AS ColumnName
+                   FROM sys.indexes i
+                   JOIN sys.index_columns ic ON i.object_id = ic.object_id AND i.index_id = ic.index_id
+                   WHERE i.object_id = OBJECT_ID('{table}')
+                   AND i.is_primary_key = 1", connection);
+
+                using (var reader = await findPkCmd.ExecuteReaderAsync())
+                {
+                    if (await reader.ReadAsync())
+                    {
+                        pkConstraints.Add((
+                            table,
+                            reader["IndexName"].ToString(),
+                            reader["ColumnName"].ToString()
+                        ));
+                    }
+                }
+            }
+
+            // Drop de eksisterende primary keys
+            foreach (var (tableName, pkName, _) in pkConstraints)
+            {
+                try
+                {
+                    Console.WriteLine($"Dropping primary key {pkName} on {tableName}");
+                    var dropPkCmd = new SqlCommand($"ALTER TABLE {tableName} DROP CONSTRAINT {pkName}", connection);
+                    await dropPkCmd.ExecuteNonQueryAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error dropping PK {pkName}: {ex.Message}");
+                }
+            }
+
+            // 4. Opret clustered indexes på UnitGuid og master_id
+            Console.WriteLine("Creating clustered indexes...");
+
+            var clusteredIndexCommands = new[]
+            {
+            "CREATE CLUSTERED INDEX CIX_Manufacturer_UnitGuid_master_id ON Manufacturer(UnitGuid, master_id)",
+            "CREATE CLUSTERED INDEX CIX_Category_UnitGuid_master_id ON Category(UnitGuid, master_id)",
+            "CREATE CLUSTERED INDEX CIX_Supplier_UnitGuid_master_id ON Supplier(UnitGuid, master_id)",
+            "CREATE CLUSTERED INDEX CIX_Location_UnitGuid_master_id ON Location(UnitGuid, master_id)",
+            "CREATE CLUSTERED INDEX CIX_Component_UnitGuid_master_id ON Component(UnitGuid, master_id)",
+            "CREATE CLUSTERED INDEX CIX_SparePart_UnitGuid_master_id ON SparePart(UnitGuid, master_id)",
+            "CREATE CLUSTERED INDEX CIX_ComponentPart_UnitGuid_master_id ON ComponentPart(UnitGuid, master_id)",
+        };
+
+            foreach (var cmdText in clusteredIndexCommands)
+            {
+                try
+                {
+                    var cmd = new SqlCommand(cmdText, connection);
+                    await cmd.ExecuteNonQueryAsync();
+                    Console.WriteLine($"Created: {cmdText}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error creating index: {cmdText} - {ex.Message}");
+                }
+            }
+
+            // 5. Genopret primary keys som nonclustered
+            foreach (var (tableName, pkName, columnName) in pkConstraints)
+            {
+                try
+                {
+                    Console.WriteLine($"Recreating primary key {pkName} on {tableName} as nonclustered");
+                    var createPkCmd = new SqlCommand(
+                        $"ALTER TABLE {tableName} ADD CONSTRAINT {pkName} PRIMARY KEY NONCLUSTERED ({columnName})",
+                        connection);
+                    await createPkCmd.ExecuteNonQueryAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error recreating PK {pkName}: {ex.Message}");
+                }
+            }
+
+            // 6. Genopret alle foreign key constraints
+            foreach (var (tableName, fkName, refTableName, columnName, refColumnName) in fkConstraints)
+            {
+                try
+                {
+                    Console.WriteLine($"Recreating foreign key {fkName} on {tableName}");
+                    var createFkCmd = new SqlCommand(
+                        $"ALTER TABLE {tableName} ADD CONSTRAINT {fkName} " +
+                        $"FOREIGN KEY ({columnName}) REFERENCES {refTableName}({refColumnName})",
+                        connection);
+                    await createFkCmd.ExecuteNonQueryAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error recreating FK {fkName}: {ex.Message}");
+                }
+            }
+
+            Console.WriteLine("Database schema and indexes created successfully.");
         }
     }
 
@@ -4093,7 +4257,7 @@ class TestDataGenerator
             "CREATE INDEX IX_ComponentPart_UnitGuid ON ComponentPart(UnitGuid)",
         };
 
-            // TODO: Add "History_Tunining" indexes
+            // TODO: Add "History_Tunining" indexes ... We need IDSeq column - global tabel sequence decending count
 
             foreach (var cmdText in indexCommands)
             {
