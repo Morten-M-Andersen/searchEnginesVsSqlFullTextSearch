@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "populate-db", "populate-db\populate-db.csproj", "{1C13C0E5-A454-44E4-A2A2-011ECC1FFFE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "populate-db", "populate-db\populate-db.csproj", "{1C13C0E5-A454-44E4-A2A2-011ECC1FFFE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "populate-db-2", "populate-db-2\populate-db-2.csproj", "{60E8CC76-4B63-41EB-8DCE-5E787E5D469E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "populate-db-2", "populate-db-2\populate-db-2.csproj", "{60E8CC76-4B63-41EB-8DCE-5E787E5D469E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElasticSearch", "ElasticSearch\ElasticSearch.csproj", "{9907B8DE-A168-4EE8-A272-96A5B7E7FEFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElasticSearchAPI", "ElasticSearchAPI\ElasticSearchAPI.csproj", "{BB6F81FE-95A7-464C-A6EF-A7BD81E52AFE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{60E8CC76-4B63-41EB-8DCE-5E787E5D469E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60E8CC76-4B63-41EB-8DCE-5E787E5D469E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60E8CC76-4B63-41EB-8DCE-5E787E5D469E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9907B8DE-A168-4EE8-A272-96A5B7E7FEFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9907B8DE-A168-4EE8-A272-96A5B7E7FEFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9907B8DE-A168-4EE8-A272-96A5B7E7FEFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9907B8DE-A168-4EE8-A272-96A5B7E7FEFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB6F81FE-95A7-464C-A6EF-A7BD81E52AFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB6F81FE-95A7-464C-A6EF-A7BD81E52AFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB6F81FE-95A7-464C-A6EF-A7BD81E52AFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB6F81FE-95A7-464C-A6EF-A7BD81E52AFE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
