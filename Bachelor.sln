@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "populate-db-2", "populate-d
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElasticSearch", "ElasticSearch\ElasticSearch.csproj", "{9907B8DE-A168-4EE8-A272-96A5B7E7FEFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElasticSearchAPI", "ElasticSearchAPI\ElasticSearchAPI.csproj", "{BB6F81FE-95A7-464C-A6EF-A7BD81E52AFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElasticSearchAPI", "ElasticSearchAPI\ElasticSearchAPI.csproj", "{BB6F81FE-95A7-464C-A6EF-A7BD81E52AFE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApacheSolr", "ApacheSolr\ApacheSolr.csproj", "{A7A0A335-6E3B-4FD5-8649-54A338244F80}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{BB6F81FE-95A7-464C-A6EF-A7BD81E52AFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB6F81FE-95A7-464C-A6EF-A7BD81E52AFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB6F81FE-95A7-464C-A6EF-A7BD81E52AFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7A0A335-6E3B-4FD5-8649-54A338244F80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7A0A335-6E3B-4FD5-8649-54A338244F80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7A0A335-6E3B-4FD5-8649-54A338244F80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7A0A335-6E3B-4FD5-8649-54A338244F80}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
