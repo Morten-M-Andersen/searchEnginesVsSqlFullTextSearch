@@ -137,15 +137,29 @@ namespace ApacheSolr
             };
 
             // Add field types
-            foreach (var fieldType in fieldTypes)
+            //foreach (var fieldType in fieldTypes)
+            foreach (var fieldTypeDefinition in fieldTypes)
             {
                 try
                 {
-                    var addFieldTypeJson = JsonSerializer.Serialize(new { @addFieldType = fieldType });
+                    //var addFieldTypeJson = JsonSerializer.Serialize(new { @addFieldType = fieldType });
+                    //var response = await _httpClient.PostAsync(
+                    //    $"{_solrUrl}/{_coreName}/schema",
+                    //    new StringContent(addFieldTypeJson, Encoding.UTF8, "application/json")
+                    //);
+                    // NYT
+                    var commandPayload = new Dictionary<string, object>
+                    {
+                        ["add-field-type"] = fieldTypeDefinition
+                    };
+                    var commandJson = JsonSerializer.Serialize(commandPayload);
+
                     var response = await _httpClient.PostAsync(
                         $"{_solrUrl}/{_coreName}/schema",
-                        new StringContent(addFieldTypeJson, Encoding.UTF8, "application/json")
+                        new StringContent(commandJson, Encoding.UTF8, "application/json")
                     );
+                    // NYT
+
 
                     // It's OK if field type already exists
                     if (!response.IsSuccessStatusCode)
@@ -153,7 +167,8 @@ namespace ApacheSolr
                         var error = await response.Content.ReadAsStringAsync();
                         if (!error.Contains("already exists"))
                         {
-                            Console.WriteLine($"Warning: Could not add field type {fieldType.name}: {error}");
+                            //Console.WriteLine($"Warning: Could not add field type {fieldType.name}: {error}");
+                            Console.WriteLine($"Warning: Could not add field type {fieldTypeDefinition.name}: {error}");
                         }
                     }
                 }
@@ -164,15 +179,28 @@ namespace ApacheSolr
             }
 
             // Add fields
-            foreach (var field in fields)
+            //foreach (var field in fields)
+            foreach (var fieldDefinition in fields)
             {
                 try
                 {
-                    var addFieldJson = JsonSerializer.Serialize(new { @addField = field });
+                    //var addFieldJson = JsonSerializer.Serialize(new { @addField = field });
+                    //var response = await _httpClient.PostAsync(
+                    //    $"{_solrUrl}/{_coreName}/schema",
+                    //    new StringContent(addFieldJson, Encoding.UTF8, "application/json")
+                    //);
+                    // NYT
+                    var commandPayload = new Dictionary<string, object>
+                    {
+                        ["add-field"] = fieldDefinition
+                    };
+                    var commandJson = JsonSerializer.Serialize(commandPayload);
+
                     var response = await _httpClient.PostAsync(
                         $"{_solrUrl}/{_coreName}/schema",
-                        new StringContent(addFieldJson, Encoding.UTF8, "application/json")
+                        new StringContent(commandJson, Encoding.UTF8, "application/json")
                     );
+                    // NYT
 
                     // It's OK if field already exists
                     if (!response.IsSuccessStatusCode)
@@ -180,13 +208,15 @@ namespace ApacheSolr
                         var error = await response.Content.ReadAsStringAsync();
                         if (!error.Contains("already exists"))
                         {
-                            Console.WriteLine($"Warning: Could not add field {field.name}: {error}");
+                            //Console.WriteLine($"Warning: Could not add field {field.name}: {error}");
+                            Console.WriteLine($"Warning: Could not add field {fieldDefinition.name}: {error}");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Warning: Error adding field {field.name}: {ex.Message}");
+                    //Console.WriteLine($"Warning: Error adding field {field.name}: {ex.Message}");
+                    Console.WriteLine($"Warning: Error adding field {fieldDefinition.name}: {ex.Message}");
                 }
             }
 
@@ -207,15 +237,28 @@ namespace ApacheSolr
                 new { source = "unitName", dest = "_text_" }
             };
 
-            foreach (var copyField in copyFields)
+            //foreach (var copyField in copyFields)
+            foreach (var copyFieldDefinition in copyFields)
             {
                 try
                 {
-                    var addCopyFieldJson = JsonSerializer.Serialize(new { @addCopyField = copyField });
+                    //var addCopyFieldJson = JsonSerializer.Serialize(new { @addCopyField = copyField });
+                    //var response = await _httpClient.PostAsync(
+                    //    $"{_solrUrl}/{_coreName}/schema",
+                    //    new StringContent(addCopyFieldJson, Encoding.UTF8, "application/json")
+                    //);
+                    // NYT
+                    var commandPayload = new Dictionary<string, object>
+                    {
+                        ["add-copy-field"] = copyFieldDefinition
+                    };
+                    var commandJson = JsonSerializer.Serialize(commandPayload);
+
                     var response = await _httpClient.PostAsync(
                         $"{_solrUrl}/{_coreName}/schema",
-                        new StringContent(addCopyFieldJson, Encoding.UTF8, "application/json")
+                        new StringContent(commandJson, Encoding.UTF8, "application/json")
                     );
+                    // NYT
 
                     // It's OK if copy field already exists
                     if (!response.IsSuccessStatusCode)
@@ -223,7 +266,8 @@ namespace ApacheSolr
                         var error = await response.Content.ReadAsStringAsync();
                         if (!error.Contains("already exists"))
                         {
-                            Console.WriteLine($"Warning: Could not add copy field {copyField.source} -> {copyField.dest}: {error}");
+                            //Console.WriteLine($"Warning: Could not add copy field {copyField.source} -> {copyField.dest}: {error}");
+                            Console.WriteLine($"Warning: Could not add copy field {copyFieldDefinition.source} -> {copyFieldDefinition.dest}: {error}");
                         }
                     }
                 }

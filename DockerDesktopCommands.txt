@@ -1,0 +1,27 @@
+Apache Solr -> Docker Desktop:
+
+	docker run -d --rm --name apache-solr-server -p 8983:8983 -v "C:\repos\apache_solr_docker\solr_data:/var/solr/" solr:9.8.1 solr-precreate spareparts
+
+		placerer data (index) i lokal mappe, her "C:\repos\apache_solr_docker\solr_data"
+		opretter indeks "spareparts" fra start
+		"--rm" gør at container fjernes helt hver gang den stoppes, for at sikre at den er ens hver gang den startes (med ovenstående kommando)
+		containerens navn er "apache-solr-server"
+		én port mappet "-p 8983:8983"
+
+	ADMIN GUI: http://localhost:8983/solr/#/
+
+ElasticSearch -> Docker Desktop:
+
+	docker run -d --rm --name elasticsearch-server -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -e "xpack.security.enabled=false" -v "C:\repos\elasticsearch_docker\elastic_data:/usr/share/elasticsearch/data/" elasticsearch:8.18.1
+
+		placerer data (index) i lokal mappe, her "C:\repos\elasticsearch_docker\elastic_data"
+		"--rm" gør at container fjernes helt hver gang den stoppes, for at sikre at den er ens hver gang den startes (med ovenstående kommando)
+		kører én node "-e "discovery.type=single-node"
+		to porte mappet, men "9300" kan fjernes lige nu
+		Security Features er DISABLED her! "xpack.security.enabled=false"
+		containerens navn er "elasticsearch-server"
+
+		(evt. tilføj: -e "logger.level=DEBUG" for at bestemme log niveauet for elasticsearch)
+
+	BEMÆRK! DET ER MULIGT at bruge Chrome Extension "https://elasticvue.com/" som GUI til at søge i ElasticSearch indeks
+

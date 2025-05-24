@@ -69,7 +69,7 @@ namespace ElasticSearchAPI
             };
 
             var searchResponse = await _client.SearchAsync<SparePartDocument>(s => s
-                .Index(_indexName)
+                .Indices(_indexName)
                 .Size(size)
                 .Query(multiMatchQuery)
             );
@@ -95,7 +95,7 @@ namespace ElasticSearchAPI
             }
 
             var searchResponse = await _client.SearchAsync<SparePartDocument>(s => s
-                .Index(_indexName)
+                .Indices(_indexName)
                 .Size(request.Size)
                 .From(request.From)
                 .Query(BuildQuery(request))
