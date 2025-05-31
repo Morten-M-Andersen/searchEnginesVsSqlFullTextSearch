@@ -1,0 +1,6 @@
+@SearchBenchmarking.Solr.Api_HostAddress = http://localhost:5015
+
+GET {{SearchBenchmarking.Solr.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
