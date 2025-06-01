@@ -4,7 +4,7 @@ using SearchBenchmarking.Library.Interfaces; // Tilgå ISearchService
 using System;
 using System.Threading.Tasks;
 
-namespace SearchBenchmarking.Solr.Api.Controllers
+namespace SearchBenchmarking.Elasticsearch.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")] // Rute bliver /api/Search
@@ -20,7 +20,7 @@ namespace SearchBenchmarking.Solr.Api.Controllers
         }
 
         /// <summary>
-        /// Searches the Solr index based on the provided query and parameters.
+        /// Searches the ElasticSearch index based on the provided query and parameters.
         /// </summary>
         /// <param name="request">The search request parameters.</param>
         /// <returns>A list of IDs matching the search criteria.</returns>

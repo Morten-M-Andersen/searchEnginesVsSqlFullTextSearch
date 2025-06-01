@@ -25,6 +25,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchBenchmarking.Solr.Api", "SearchBenchmarking.Solr.Api\SearchBenchmarking.Solr.Api.csproj", "{A9D3CED2-2850-4775-9D20-DDAB61956C43}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchBenchmarking.Elasticsearch.Api", "SearchBenchmarking.Elasticsearch.Api\SearchBenchmarking.Elasticsearch.Api.csproj", "{E1B768D7-6C33-49DA-8347-D99D59BB8735}"
+	ProjectSection(ProjectDependencies) = postProject
+		{70654FB2-A305-4EFB-B1A6-DA425278AF72} = {70654FB2-A305-4EFB-B1A6-DA425278AF72}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
