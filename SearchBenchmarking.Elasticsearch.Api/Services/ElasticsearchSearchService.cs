@@ -65,18 +65,27 @@ namespace SearchBenchmarking.Elasticsearch.Api.Services
                     .Indices(_defaultIndex)
                     .From(request.StartFrom)
                     .Size(request.PageSize)
+                    //.Query(q => q
+                    //    .MultiMatch(mm =>
+                    //    {
+                    //        mm.Query(request.Query);
+                    //        // Giv _searchableFields direkte til Fields() metoden, hvis de findes
+                    //        if (_searchableFields != null && _searchableFields.Any())
+                    //        {
+                    //            mm.Fields(_searchableFields); // <-- Rettet her
+                    //        }
+                    //        // Andre MultiMatch options kan tilføjes her, f.eks. .Type(TextQueryType.BestFields)
+                    //    })
+                    //)
                     .Query(q => q
-                        .MultiMatch(mm =>
-                        {
-                            mm.Query(request.Query);
-                            // Giv _searchableFields direkte til Fields() metoden, hvis de findes
-                            if (_searchableFields != null && _searchableFields.Any())
-                            {
-                                mm.Fields(_searchableFields); // <-- Rettet her
-                            }
-                            // Andre MultiMatch options kan tilføjes her, f.eks. .Type(TextQueryType.BestFields)
-                        })
-                    )
+                        .QueryString(qs => qs
+                            .Query(request.Query)// + "*") // trailing wildcard search
+                            // .Query(request.Query) // Hvis søgeteksten selv indeholder * (ikke wildcard)
+                            .Fields(_searchableFields) // Specificer felter
+                            .AnalyzeWildcard(true) // Vigtigt for performance af ledende wildcards
+                            .DefaultOperator(Operator.Or) // Eller Operator.And
+                            )
+                        )
                     // Begrænser _source til kun 'id' mhp. effektivitet
                     .Source(src => src
                         .Filter(f => f
