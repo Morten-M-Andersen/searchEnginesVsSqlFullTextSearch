@@ -46,7 +46,7 @@ namespace SearchBenchmarking.Elasticsearch.Api.Services
             if (string.IsNullOrWhiteSpace(request.Query))
             {
                 _logger.LogInformation("Tom søgestreng modtaget for Elasticsearch. Returnerer ingen resultater.");
-                return new BenchmarkDTO.SearchResult { Ids = new List<string>(), TotalHits = 0, QueryTimeMs = 0 };
+                return new BenchmarkDTO.SearchResult { Hits = new List<BenchmarkDTO.DocumentHit>(), TotalHits = 0, QueryTimeMs = 0 };
             }
 
             try
@@ -59,6 +59,8 @@ namespace SearchBenchmarking.Elasticsearch.Api.Services
                     request.PageSize,
                     request.StartFrom);
 
+                // Elasticsearch returnerer _score automatisk, så vi behøver ikke specificere det i _source filter
+                // men vi skal stadig begrænse _source til kun 'id'
                 var response = await _esClient.SearchAsync<SparePartElasticDocument>(s => s
                     .Indices(_defaultIndex)
                     .From(request.StartFrom)
@@ -75,20 +77,27 @@ namespace SearchBenchmarking.Elasticsearch.Api.Services
                             // Andre MultiMatch options kan tilføjes her, f.eks. .Type(TextQueryType.BestFields)
                         })
                     )
+                    // Begrænser _source til kun 'id' mhp. effektivitet
                     .Source(src => src
                         .Filter(f => f
                             .Includes(Infer.Field<SparePartElasticDocument>(p => p.Id))
                         )
                     )
+                // .TrackScores(true) // Er typisk default, men kan specificeres eksplicit hvis man er i tvivl
                 );
 
                 if (response.IsValidResponse)
                 {
                     return new BenchmarkDTO.SearchResult
                     {
-                        Ids = response.Documents.Select(doc => doc.Id).ToList(),
+                        //Ids = response.Documents.Select(doc => doc.Id).ToList(),
                         TotalHits = response.Total,
-                        QueryTimeMs = (int)response.Took
+                        QueryTimeMs = (int)response.Took,
+                        Hits = response.Hits.Select(hit => new BenchmarkDTO.DocumentHit
+                        {
+                            Id = hit.Source?.Id, // Antager Id er i _source
+                            Score = (float)(hit.Score ?? 0.0) // konverter til float
+                        }).ToList()
                     };
                 }
                 else
@@ -103,25 +112,20 @@ namespace SearchBenchmarking.Elasticsearch.Api.Services
                         errorMessage += $" DebugInfo: {response.ApiCallDetails.DebugInformation}";
                     }
                     _logger.LogError(errorMessage);
-                    return new BenchmarkDTO.SearchResult { ErrorMessage = errorMessage };
+                    return new BenchmarkDTO.SearchResult { Hits = new List<BenchmarkDTO.DocumentHit>(), ErrorMessage = errorMessage };
                 }
             }
-            //catch (ElasticsearchClientException esEx)
-            //{
-            //    _logger.LogError(esEx, "ElasticsearchClientException under søgning for query: {Query}. DebugInformation: {DebugInfo}", request.Query, esEx.Response?.DebugInformation);
-            //    return new BenchmarkDTO.SearchResult { ErrorMessage = $"Elasticsearch client error: {esEx.Message}" };
-            //}
             catch (Elastic.Transport.TransportException transportEx)
             {
                 _logger.LogError(transportEx, "Elastic TransportException under søgning for query: {Query}. DebugInformation: {DebugInfo}",
                                  request.Query,
                                  (transportEx.ApiCallDetails != null ? transportEx.ApiCallDetails.DebugInformation : "N/A"));
-                return new BenchmarkDTO.SearchResult { ErrorMessage = $"Elastic transport error: {transportEx.Message}" };
+                return new BenchmarkDTO.SearchResult { Hits = new List<BenchmarkDTO.DocumentHit>(), ErrorMessage = $"Elastic transport error: {transportEx.Message}" };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Uventet fejl under Elasticsearch søgning for query: {Query}", request.Query);
-                return new BenchmarkDTO.SearchResult { ErrorMessage = $"An unexpected error occurred: {ex.Message}" };
+                return new BenchmarkDTO.SearchResult { Hits = new List<BenchmarkDTO.DocumentHit>(), ErrorMessage = $"An unexpected error occurred: {ex.Message}" };
             }
         }
     }

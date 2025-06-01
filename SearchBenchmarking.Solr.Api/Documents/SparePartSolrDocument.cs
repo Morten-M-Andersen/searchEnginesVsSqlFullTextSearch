@@ -106,5 +106,7 @@ namespace SearchBenchmarking.Solr.Api.Documents
         [SolrField("unitName")]
         [JsonPropertyName("unitName")]
         public ICollection<string> UnitName { get; set; }
+        [SolrField("score")]
+        public float Score { get; internal set; }
     }
 }

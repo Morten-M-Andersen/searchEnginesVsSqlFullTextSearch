@@ -76,7 +76,7 @@ namespace SearchBenchmarking.Solr.Api.Controllers
                 }
 
                 _logger.LogInformation("Search successful for Query='{Query}'. Found {TotalHits} hits. Returning {IdCount} IDs.",
-                                       request.Query, result.TotalHits, result.Ids.Count);
+                                       request.Query, result.TotalHits, result.Hits.Count);
 
                 return Ok(result);
             }

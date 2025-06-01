@@ -1,11 +1,9 @@
 using Microsoft.OpenApi.Models;
-//using Microsoft.Extensions.DependencyInjection;
-using SolrNet.Microsoft.DependencyInjection; // Til SolrNet integration, specifikt "builder.Services.AddSolrNet<T>()"
-using SearchBenchmarking.Library.Interfaces; // Til ISearchService
-using SearchBenchmarking.Solr.Api.Documents; // Til SparePartSolrDocument
-using SearchBenchmarking.Solr.Api.Services;  // Til SolrSearchService
-using SolrNet; // Hoved SolrNet namespace
-//using SolrNet.Impl; // Hvis du bruger specifikke Core dele, ofte ikke nødvendigt direkte her
+using SolrNet.Microsoft.DependencyInjection;
+using SearchBenchmarking.Library.Interfaces;
+using SearchBenchmarking.Solr.Api.Documents;
+using SearchBenchmarking.Solr.Api.Services;
+using SolrNet;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,26 +15,14 @@ string solrFullUrl = $"{solrUrl}/{coreName}";
 
 // --- Konfigurer og tilføj tjenester til containeren ---
 
-// 1. Tilføj SolrNet
-// Dette registrerer ISolrOperations<SparePartSolrDocument> og andre nødvendige SolrNet services.
-// Det antager, at der er defineret en SparePartSolrDocument klasse, der mapper til felterne i Solr.
 builder.Services.AddSolrNet<SparePartSolrDocument>(solrFullUrl);
 
-// Hvis du vil have mere kontrol over SolrNet-initialiseringen, kan du gøre det manuelt:
-//builder.Services.AddSingleton<ISolrConnection>(new SolrConnection(solrFullUrl));
-//builder.Services.AddScoped<ISolrBasicOperations<SparePartSolrDocument>, SolrBasicServer<SparePartSolrDocument>>();
-//builder.Services.AddScoped<ISolrOperations<SparePartSolrDocument>, SolrServer<SparePartSolrDocument>>();
-// Men AddSolrNet<T>() er den nemmeste og mest almindelige måde.
-
-// 2. Tilføj din custom Search Service implementering
-// Registrerer SolrSearchService som den konkrete implementering af ISearchService.
-// Scoped er et godt valg for services, der kan have afhængigheder som DbContexts eller SolrOperations.
+// Tilføjer custom Search Service implementering
 builder.Services.AddScoped<ISearchService, SolrSearchService>();
 
-// 3. Tilføj Controller services
 builder.Services.AddControllers();
 
-// 4. Tilføj Swagger/OpenAPI for API dokumentation
+// Tilføjer Swagger/OpenAPI for API dokumentation
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -48,8 +34,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// 5. Konfigurer CORS (Cross-Origin Resource Sharing)
-// Dette er et simpelt "AllowAll" eksempel. I produktion bør du være mere specifik.
+// Konfigurerer CORS (Cross-Origin Resource Sharing)
 var corsPolicyName = "AllowAllOrigins";
 builder.Services.AddCors(options =>
 {
@@ -62,16 +47,10 @@ builder.Services.AddCors(options =>
                       });
 });
 
-// 6. Tilføj Application Insights Telemetry (Valgfrit, men godt for overvågning)
-// builder.Services.AddApplicationInsightsTelemetry(); // Husk at tilføje NuGet pakke og konfiguration
-
-
-// --- Byg applikationen ---
 var app = builder.Build();
 
-// --- Konfigurer HTTP request pipeline ---
 
-// 1. Brug Swagger i Development miljøet
+// Brug Swagger i Development miljøet - skal tilføje appsettings.Development.json...
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -82,22 +61,10 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// 2. Brug HTTPS Redirection (Anbefalet for produktion)
-// Sørg for at din Docker container/reverse proxy håndterer SSL terminering,
-// eller at Kestrel er konfigureret til HTTPS.
-// app.UseHttpsRedirection();
-
-// 3. Brug CORS
+// Brug CORS (hvis konfigureret)
 app.UseCors(corsPolicyName);
 
-// 4. Brug Routing (Nødvendig for at controllers virker)
-app.UseRouting(); // Skal komme før UseAuthorization og UseEndpoints/MapControllers
-
-// 5. Brug Authorization (Hvis du implementerer det)
-// app.UseAuthentication(); // Hvis du har authentication middleware
-// app.UseAuthorization();
-
-// 6. Map Controllers til endpoints
+app.UseRouting();
 app.MapControllers();
 
 // --- Log startup information ---
@@ -105,5 +72,4 @@ app.Logger.LogInformation("Solr API ({ApplicationName}) is starting up.", builde
 app.Logger.LogInformation("Solr Instance URL: {SolrUrl}", solrFullUrl);
 app.Logger.LogInformation("Environment: {EnvironmentName}", builder.Environment.EnvironmentName);
 
-// --- Kør applikationen ---
 app.Run();

@@ -30,17 +30,18 @@ namespace SearchBenchmarking.Solr.Api.Services
 
         public async Task<SearchResult> SearchAsync(SearchRequest request)
         {
+            // Tjek for null eller ugyldige værdier i request
             if (request == null)
             {
                 _logger.LogWarning("SearchRequest objektet var null.");
                 // Overvej at kaste ArgumentNullException eller returnere et tomt/fejl resultat
-                return new SearchResult { Ids = new List<string>(), TotalHits = 0, QueryTimeMs = -1 };
+                return new SearchResult { Hits = new List<DocumentHit>(), TotalHits = 0, QueryTimeMs = -1 };
             }
 
             if (string.IsNullOrWhiteSpace(request.Query))
             {
                 _logger.LogInformation("Tom søgestreng modtaget. Returnerer ingen resultater.");
-                return new SearchResult { Ids = new List<string>(), TotalHits = 0, QueryTimeMs = 0 };
+                return new SearchResult { Hits = new List<DocumentHit>(), TotalHits = 0, QueryTimeMs = 0 };
             }
 
             // Sammensæt qf-strengen fra de konfigurerede søgbare felter
@@ -54,63 +55,42 @@ namespace SearchBenchmarking.Solr.Api.Services
                 _logger.LogWarning("_searchableFields er ikke konfigureret eller er tom. Edismax søgning vil måske ikke fungere som forventet eller vil bruge Solr defaults for qf.");
             }
 
+            var extraParametersForSolr = new Dictionary<string, string> { { "defType", "edismax" } };
+            if (!string.IsNullOrWhiteSpace(qfValue))
+            {
+                extraParametersForSolr.Add("qf", qfValue);
+            }
+
             var queryOptions = new QueryOptions
             {
                 Rows = request.PageSize,
                 StartOrCursor = new StartOrCursor.Start(request.StartFrom),
-                // VIGTIGT: Specificer at kun 'id'-feltet skal returneres fra Solr.
-                // Dette forudsætter, at din SparePartSolrDocument klasse har en 'Id' property,
-                // og at SolrNet mapper dette korrekt, selvom du kun henter dette felt.
-                Fields = new[] { "id" },
-                ExtraParams = new Dictionary<string, string>
-        {
-            { "defType", "edismax" },
-            {"qf", qfValue}, // Brug den sammensatte qf værdi
-            //{"mm", "2<75%"} // Minimum match parameter, kan justeres efter behov
-            // Andre parametre kan tilføjes her efter behov, f.eks. "mm" for minimum match, "pf" for phrase fields osv.
-        }
+                // "id" er ofte Solrs unique key og returneres vistnok selvom den ikke er eksplicit i fl,
+                Fields = new[] { "id", "score" },
+                ExtraParams = extraParametersForSolr
             };
-
-            // Tilføj kun qf parameteren, hvis den faktisk har en værdi.
-            // At sende en tom "qf=" kan have uønsket adfærd i Solr.
-            //if (!string.IsNullOrWhiteSpace(qfValue))
-            //{
-            //    queryOptions.ExtraParams.Add("qf", qfValue);
-            //}
-            //else
-            //{
-            //    // Hvis qfValue er tom, og edismax kræver qf, kan Solr returnere en fejl.
-            //    // Overvej om du skal logge en mere alvorlig advarsel eller kaste en fejl her,
-            //    // hvis en tom qf ikke er en acceptabel tilstand for din applikation.
-            //    _logger.LogWarning("qf parameteren er tom for edismax søgning. Resultater kan være uforudsigelige.");
-            //}
 
             try
             {
-                _logger.LogDebug("Udfører Solr query: '{Query}' med qf: '{QueryFields}', Rows: {Rows}, Start: {Start}",
-                    request.Query, qfValue, request.PageSize, request.StartFrom);
+                _logger.LogDebug("Udfører Solr query: '{Query}' med ExtraParams: '{ExtraParams}', Fields: 'id,score', Rows: {Rows}, Start: {Start}",
+                    request.Query, string.Join(", ", extraParametersForSolr.Select(kv => kv.Key + "=" + kv.Value)), request.PageSize, request.StartFrom);
 
-                // _solr skal være af typen ISolrOperations<SparePartSolrDocument>
                 var solrQuery = new SolrQuery(request.Query);
                 var solrResults = await _solr.QueryAsync(solrQuery, queryOptions);
 
-                // Map SolrNet's resultat (ISolrQueryResults<SparePartSolrDocument>) 
-                // til din fælles SearchResult DTO.
-                // solrResults vil indeholde SparePartSolrDocument objekter, hvor kun Id-property
-                // (og evt. score) er udfyldt, fordi vi specificerede Fields = new[] { "id" }.
                 return new SearchResult
                 {
                     TotalHits = solrResults.NumFound,
                     QueryTimeMs = solrResults.Header?.QTime ?? 0, // QTime er Solr's interne query tid
-                    Ids = solrResults.Select(doc => doc.Id).ToList() // Sørg for at SparePartSolrDocument har en 'Id' string property
-                    
+                    Hits = solrResults.Select(doc => new DocumentHit { Id = doc.Id, Score = doc.Score }).ToList(),
+
                 };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Fejl under udførelse af Solr query for: {Query}", request.Query);
                 // Returner et tomt resultat eller kast en specifik exception, der kan håndteres i controlleren
-                return new SearchResult { Ids = new List<string>(), TotalHits = 0, QueryTimeMs = -1 }; // Indikerer fejl
+                return new SearchResult { Hits = new List<DocumentHit>(), ErrorMessage = $"Solr error: {ex.Message}" }; // Indikerer fejl
             }
         }
     }
