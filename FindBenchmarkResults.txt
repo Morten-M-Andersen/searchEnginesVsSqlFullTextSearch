@@ -1,0 +1,4 @@
+
+Find benchmark resultater her:
+
+*\Bachelor\SearchBenchmarking.PerformanceTests\bin\Release\net8.0\BenchmarkDotNet.Artifacts

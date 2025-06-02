@@ -16,6 +16,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
 		DockerDesktopCommands.txt = DockerDesktopCommands.txt
+		FindBenchmarkResults.txt = FindBenchmarkResults.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchApiBenchmark", "SearchApiBenchmark\SearchApiBenchmark.csproj", "{47ED1BFE-779E-4EC9-B0AF-DF2EA7AD2AD0}"
@@ -27,6 +28,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchBenchmarking.Elasticsearch.Api", "SearchBenchmarking.Elasticsearch.Api\SearchBenchmarking.Elasticsearch.Api.csproj", "{E1B768D7-6C33-49DA-8347-D99D59BB8735}"
 	ProjectSection(ProjectDependencies) = postProject
 		{70654FB2-A305-4EFB-B1A6-DA425278AF72} = {70654FB2-A305-4EFB-B1A6-DA425278AF72}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchBenchmarking.PerformanceTests", "SearchBenchmarking.PerformanceTests\SearchBenchmarking.PerformanceTests.csproj", "{5B44CE2F-4446-408F-9EC6-CCEE0F1B1449}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A9D3CED2-2850-4775-9D20-DDAB61956C43} = {A9D3CED2-2850-4775-9D20-DDAB61956C43}
+		{E1B768D7-6C33-49DA-8347-D99D59BB8735} = {E1B768D7-6C33-49DA-8347-D99D59BB8735}
 	EndProjectSection
 EndProject
 Global
@@ -71,6 +78,10 @@ Global
 		{E1B768D7-6C33-49DA-8347-D99D59BB8735}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1B768D7-6C33-49DA-8347-D99D59BB8735}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E1B768D7-6C33-49DA-8347-D99D59BB8735}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B44CE2F-4446-408F-9EC6-CCEE0F1B1449}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B44CE2F-4446-408F-9EC6-CCEE0F1B1449}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B44CE2F-4446-408F-9EC6-CCEE0F1B1449}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B44CE2F-4446-408F-9EC6-CCEE0F1B1449}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

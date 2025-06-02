@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "SearchBenchmarking.Solr.Api\\SearchBenchmarking.Solr.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "SearchBenchmarking.Elasticsearch.Api\\SearchBenchmarking.Elasticsearch.Api.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
