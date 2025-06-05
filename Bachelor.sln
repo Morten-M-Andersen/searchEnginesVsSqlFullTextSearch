@@ -36,6 +36,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchBenchmarking.Performa
 		{E1B768D7-6C33-49DA-8347-D99D59BB8735} = {E1B768D7-6C33-49DA-8347-D99D59BB8735}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchBenchmarking.Sql.Api", "SearchBenchmarking.Sql.Api\SearchBenchmarking.Sql.Api.csproj", "{2318E341-1DC3-41E6-804D-C67D959387DF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{70654FB2-A305-4EFB-B1A6-DA425278AF72} = {70654FB2-A305-4EFB-B1A6-DA425278AF72}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,6 +87,10 @@ Global
 		{5B44CE2F-4446-408F-9EC6-CCEE0F1B1449}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B44CE2F-4446-408F-9EC6-CCEE0F1B1449}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B44CE2F-4446-408F-9EC6-CCEE0F1B1449}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2318E341-1DC3-41E6-804D-C67D959387DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2318E341-1DC3-41E6-804D-C67D959387DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2318E341-1DC3-41E6-804D-C67D959387DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2318E341-1DC3-41E6-804D-C67D959387DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
