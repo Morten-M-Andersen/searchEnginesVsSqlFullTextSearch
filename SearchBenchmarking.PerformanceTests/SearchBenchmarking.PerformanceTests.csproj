@@ -8,10 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="TestData\SearchTerms - Copy.txt" />
     <None Remove="TestData\SearchTerms.txt" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="TestData\SearchTerms - Copy.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestData\SearchTerms.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

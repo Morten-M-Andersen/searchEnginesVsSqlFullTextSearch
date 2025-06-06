@@ -11,7 +11,7 @@ using System;
 
 namespace SearchBenchmarking.PerformanceTests.Benchmarks
 {
-    [SimpleJob(RuntimeMoniker.Net80, warmupCount: 3, iterationCount: 5)]
+    [SimpleJob(RuntimeMoniker.Net80, warmupCount: 5, iterationCount: 10)]
     [MemoryDiagnoser]
     [RankColumn, MinColumn, MaxColumn, Q1Column, Q3Column, MeanColumn, MedianColumn, StdDevColumn] // AllStatisticsColumn]
     public class SearchApiBenchmarks
@@ -22,7 +22,7 @@ namespace SearchBenchmarking.PerformanceTests.Benchmarks
         // --- Parametre for at vælge API og søgeterm ---
         // BenchmarkDotNet vil køre en kombination for hver værdi af ApiName og CurrentSearchTerm.
 
-        [Params(ApiTarget.Solr, ApiTarget.Elasticsearch)] // Definer hvilke API'er der skal testes
+        [Params(ApiTarget.Solr, ApiTarget.Elasticsearch, ApiTarget.Sql)] // Definer hvilke API'er der skal testes
         public ApiTarget TargetApi { get; set; }
 
         public string CurrentSearchTerm { get; set; }
@@ -33,12 +33,14 @@ namespace SearchBenchmarking.PerformanceTests.Benchmarks
         public enum ApiTarget
         {
             Solr,
-            Elasticsearch
+            Elasticsearch,
+            Sql
         }
 
         // API URL'er - juster portnumre efter behov
         private const string SolrApiBaseUrl = "http://localhost:5015/api/Search";
         private const string ElasticsearchApiBaseUrl = "http://localhost:5139/api/Search";
+        private const string SqlApiBaseUrl = "http://localhost:5229/api/Search";
 
         [GlobalSetup]
         public void GlobalSetup()
@@ -79,6 +81,9 @@ namespace SearchBenchmarking.PerformanceTests.Benchmarks
                     break;
                 case ApiTarget.Elasticsearch:
                     _apiBaseUrl = ElasticsearchApiBaseUrl;
+                    break;
+                case ApiTarget.Sql:
+                    _apiBaseUrl = SqlApiBaseUrl;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(TargetApi), "Ukendt API target specificeret.");

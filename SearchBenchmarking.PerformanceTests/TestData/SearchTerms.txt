@@ -1,39 +1,34 @@
-﻿Switzerland
-South Korea
-USA
-Manufacturer Direct
-OEM Partner
-After-Market
-Lower Deck
-Production
-Warehouse
+﻿OEM
 Propulsion
 HVAC
-Auxiliary Systems
-Cargo Handling
+Auxiliary
+Systems
 Warranty
 certified
-high-precision components
-Premium
+precision
+components
 Variable
-Quality rating
-high-pressure
+pressure
 hazardous
-high-temperature
-energy-efficient solutions
-Authorized Personnel
+temperature
+efficient
+Authorized
+Personnel
 Humidity
-Vibration isolated
+Vibration
+isolated
 Maneuvering
 Cooling
 Switchboard
 Lighting
-Cylinder System
+Cylinder
+System
 Accumulator
 Dryer
 Lubrication
 Filtration
-Fire Detection
+Fire
+Detection
 Rescue
 Emergency
 Centrifugal
@@ -44,27 +39,18 @@ Butterfly
 Diaphragm
 Solenoid
 Actuated
-Hydraulic Actuated
+Hydraulic
+Actuated
 Frequency
-Single-Acting
+Single
+Acting
 Bearing
-Needle Bearing
+Needle
 Key
 Pin
-Steel 304
-Stainless Steel 316
+Steel
+Stainless
 PTFE
 API
 BS
-ISO 5199
-24256
-IP66
-SKF
-1-1/2
-5/8
-2.2kW
-75kW
-22216
-Type-B
-Series-2
-pharmaceutical
+ISO

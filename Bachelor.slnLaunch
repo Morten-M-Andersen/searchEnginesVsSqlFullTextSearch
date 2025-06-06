@@ -1,6 +1,6 @@
 [
   {
-    "Name": "New Profile",
+    "Name": "RunSearchApis",
     "Projects": [
       {
         "Path": "SearchBenchmarking.Solr.Api\\SearchBenchmarking.Solr.Api.csproj",
@@ -8,6 +8,10 @@
       },
       {
         "Path": "SearchBenchmarking.Elasticsearch.Api\\SearchBenchmarking.Elasticsearch.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "SearchBenchmarking.Sql.Api\\SearchBenchmarking.Sql.Api.csproj",
         "Action": "Start"
       }
     ]
