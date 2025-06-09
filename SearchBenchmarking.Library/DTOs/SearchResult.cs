@@ -14,7 +14,6 @@ namespace SearchBenchmarking.Library.DTOs
         public long TotalHits { get; set; } // Antal fundne dokumenter
         public int QueryTimeMs { get; set; } // Forespørgselstid i ms
         public string? ErrorMessage { get; set; }
-        //public List<string> Ids { get; set; } = new List<string>();
         public List<DocumentHit> Hits { get; set; } = new List<DocumentHit>();
     }
 }
